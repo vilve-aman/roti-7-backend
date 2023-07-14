@@ -1,0 +1,13 @@
+flask-server-roti/__pycache__
+flask-server-roti/app/__pycache__
+flask-server-roti/backpacker/__pycache__
+flask-server-roti/model/__pycache__
+flask-server-roti/utils/__pycache__
+
+
+flask-server-roti/.idea
+
+backpacker/node_modules
+
+.env
+secrets.env

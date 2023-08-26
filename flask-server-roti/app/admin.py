@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
 
 from app.thor_tools import generate_backpacker_query, get_backpacker_locations, generate_direction_query, \
-    generate_runlog_id
+    generate_runlog_id, generate_batched_direction_query
 from backpacker.firebase import set_backpacker_document, get_backpacker_document, get_backpacker_documents_count, \
     get_all_documents, backpacker_login
-from backpacker.mapbox import get_backpacker_optimization, get_directions
+from backpacker.mapbox import get_backpacker_optimization, get_directions, get_batched_directions
 
 admin: Blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -72,8 +72,12 @@ def generate_maps():
     # print(locations, optimizations)
     for optimization in optimizations["routes"]:
         itr += 1
-        direction_payload = generate_direction_query(optimization)
-        directions = get_directions(direction_payload)
+         # direction_payload = generate_direction_query(optimization)
+        # directions = get_directions(direction_payload)
+
+        directions_payload = generate_batched_direction_query(optimization)
+        directions = get_batched_directions({'batchedcoords': directions_payload})
+
         runlogId = generate_runlog_id(f'R{itr}')
         route = {"optimization": optimization, "directions": directions, "runlogId": runlogId, "routeId": f'R{itr}'}
         ack = set_backpacker_document(collId='routes', docId=f'R{itr}', doc=route)

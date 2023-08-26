@@ -95,6 +95,31 @@ def generate_direction_query(optimization):
     return {"coords": query_string[:-1]}
 
 
+def generate_batched_direction_query(optimization):
+    def extract_coordinates_string(s):
+        coords = s['location_metadata']['snapped_coordinate']
+        return str(coords[0]) + ',' + str(coords[1]) + ';'
+
+    def process_small_list(_small_list):
+        qs = ''
+        for stop in _small_list:
+            qs = qs + extract_coordinates_string(stop)
+        return qs
+
+    batch_size = 20
+    all_batches = []
+    itr = 0
+
+    query_string = ''
+    while itr < len(optimization['stops']):
+        small_list = optimization['stops'][itr: itr + batch_size]
+        all_batches.append(query_string + process_small_list(small_list)[:-1])
+        query_string = extract_coordinates_string(small_list[-1])
+        itr = itr + batch_size
+    # print(all_batches)
+    return all_batches
+
+
 def generate_runlog_id(routeId):
     new_doc = RunLogs(routeId, None, None)
     res, _ = set_backpacker_document("runlogs", new_doc.get_runlog_id(), new_doc.get_obj())

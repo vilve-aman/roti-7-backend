@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "welcome to JDoodle"
+echo "Jaadoo ..."
 
 node /backpacker/server.js  &
 python /flask_app/server.py

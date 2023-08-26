@@ -21,12 +21,24 @@ def get_backpacker_optimization(payload):
     }
     data = requests.post(url, data=payload, headers=headers).json()
     if not data.get("routes"):
-        return {"err" : "routes not found"} , 404
+        return {"err": "routes not found"}, 404
     return data, 200
 
 
 def get_directions(payload):
     url = f"{base_url}/mapbox/direction"
+
+    payload = json.dumps(payload)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    data = requests.post(url, data=payload, headers=headers)
+
+    return data.json()
+
+
+def get_batched_directions(payload):
+    url = f"{base_url}/mapbox/batched-direction"
 
     payload = json.dumps(payload)
     headers = {

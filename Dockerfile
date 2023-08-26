@@ -1,12 +1,8 @@
 FROM nikolaik/python-nodejs:python3.11-nodejs18-slim as node-server
 
 
-# load environment 
-ENV BACKPACKER_BASE_URL='http://localhost:4000'
-ENV ACCESS_TOKEN='pk.eyJ1IjoiZGV2aWx2ZSIsImEiOiJjbGZvMHEyeGUwMDNiM3ZwdzNkbDdxZndiIn0.WNUNtzLt7wKeKCpjWw5wlg'
-ENV ADMIN_EMAIL='roti7_test_admin@roti7.com'
-ENV ADMIN_PASSWORD='1234567890'
-ENV DELIVERY_IMAGES_PATH='test_images/'
+# load environment here
+
 
 
 

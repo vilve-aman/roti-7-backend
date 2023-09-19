@@ -33,8 +33,10 @@ def get_backpacker_locations(collection='locationV2'):
 
     locations = []
     for doc in docs['collection']:
-        locations.append(doc['docData'])
-
+        locations.append({
+            "address": doc['docData'].get("address", {}),
+            "name": doc['docData'].get("name")
+        })
     return locations
 
 
@@ -54,22 +56,38 @@ def generate_backpacker_query(user_locations, vehicle_count):
     }
     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     """
-    warehouse, _ = get_backpacker_document(collId='warehouse', docId='start')
-    print(warehouse)
-    locations = [warehouse]
-    locations.extend(user_locations)
+    warehouse, _ = get_backpacker_document(collId='warehouse', docId='kitchen-1')
+    # adding warehouse location
+    locations = [{
+        "name": warehouse.get("name"),
+        "coordinates": [warehouse['address']['lng'], warehouse['address']['lat']],
+    }]
+    # adding all users location and giving locations a custom name
+    locations.extend([
+        {
+            "name": f"{idx + 1}. " +
+                    f"{loc.get('address', {}).get('streetSocity', '')} " +
+                    f"{loc.get('address', {}).get('city', '')} " +
+                    f"{loc.get('address', {}).get('state', '')}",
+            "coordinates": [loc['address']['lng'], loc['address']['lat']],
+        }
+        for idx, loc in enumerate(user_locations)
+    ])
 
     vehicles = [{"name": f"car-{i}", "start_location": warehouse['name']} for i in range(vehicle_count)]
 
     shipments = []
-    for loc in user_locations:
+    for idx, loc in enumerate(user_locations):
         parcel = {
-            "name": loc['name'] + "$food order name",
+            "name": f"{idx+1}-{loc['name']}",
             "from": warehouse['name'],
-            "to": loc['name']
+            "to": f"{idx + 1}. " +
+                  f"{loc.get('address', {}).get('streetSocity', '')} " +
+                  f"{loc.get('address', {}).get('city', '')} " +
+                  f"{loc.get('address', {}).get('state', '')}",
         }
         shipments.append(parcel)
-    # print(shipments)
+    # print(locations, "\n" ,shipments)
 
     options = {
         "objectives": ["min-schedule-completion-time"]

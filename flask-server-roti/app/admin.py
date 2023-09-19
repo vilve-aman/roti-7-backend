@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, jsonify
 
 from app.thor_tools import generate_backpacker_query, get_backpacker_locations, generate_direction_query, \
@@ -58,9 +60,10 @@ def generate_maps():
     :return:
     """
     data = request.json
-    locations = get_backpacker_locations(data['collId'])
+    locations = get_backpacker_locations(os.getenv("BACKPACKER_ROTY_USERS") or data['collId'])
     backpacker_payload = generate_backpacker_query(locations, int(data['bandwidth']))
     optimizations, status = get_backpacker_optimization(backpacker_payload)
+    # return optimizations
 
     # -----------------------------------------------------------------------------------------------------------------
     #       Postprocessing...

@@ -33,10 +33,11 @@ def get_backpacker_locations(collection='locationV2'):
 
     locations = []
     for doc in docs['collection']:
-        locations.append({
-            "address": doc['docData'].get("address", {}),
-            "name": doc['docData'].get("name")
-        })
+        if doc['docData']['user_type'] not in ['admin']:
+            locations.append({
+                "address": doc['docData'].get("address", {}),
+                "name": doc['docData'].get("name")
+            })
     return locations
 
 
